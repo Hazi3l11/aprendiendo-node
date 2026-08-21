@@ -1,20 +1,13 @@
 const express = require("express")
 const router = require("./routes/usuarios.router")
-require("dotenv").config()
+const PORT = require("./config/env")
 
 const app = express()
 
-const PORT = process.env.PORT || 3000
+
 
 app.use(express.json()) 
 app.use(registrarPeticion)
-app.use((err, req, res, next) => {
-    console.error(err.message)
-    res.status(500).json({
-        mensaje: "Algo salió mal en el servidor"
-    })
-})
-
 
 //app.get("/", (req, res) => {
 //    res.send("Bienvenido a mi API")
@@ -24,7 +17,7 @@ app.get("/", (req, res, next) => {
     next(new Error("Error de prueba"))
 })
 
-/*
+
 app.get("/usuarios", (req, res) => {
     const usuarios = [ 
         {
@@ -39,10 +32,15 @@ app.get("/usuarios", (req, res) => {
     const id = Number(req.params.id)
     res.json(usuarios)
 })
-*/
+
 app.use("/usuarios", router)
 
-
+app.use((err, req, res, next) => {
+    console.error(err.message)
+    res.status(500).json({
+        mensaje: "Algo salió mal en el servidor"
+    })
+})
 app.listen(PORT, () => {
     console.log(`Servidor ejecutandose en ${PORT}`)
 })
