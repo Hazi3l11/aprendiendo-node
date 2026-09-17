@@ -17,4 +17,15 @@ model Usuario {
   nombre  String
   edad    Int
   carrera String
+  publicaciones Publicacion[]
+}
+
+model Publicacion {
+  id Int @id @default(autoincrement())
+  titulo String
+  contenido String
+  usuarioId Int
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+   
 }
