@@ -1,8 +1,14 @@
-import { Persona, presentarPersona } from "./persona.js";
+import express from "express"
+import usuarioRoutes from "./routes/usuario.routes.js"
+import publicacionRoutes from "./routes/publicacion.routes.js"
 
-const usuario: Persona = {
-    nombre: "Haziel",
-    edad: 20,
-}
+const app = express()
 
-presentarPersona(usuario)
+app.use(express.json())
+
+app.use(usuarioRoutes)
+app.use(publicacionRoutes)
+
+app.listen(3000, () => {
+    console.log("Servidor ejecutándose en http://localhost:3000")
+})
