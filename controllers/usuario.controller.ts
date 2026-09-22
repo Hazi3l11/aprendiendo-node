@@ -1,5 +1,6 @@
 import type { Request, Response } from "express"
 import prisma from "../db.js"
+import { Prisma } from "../generated/prisma/client.js"
 
 export const obtenerUsuarios = async (
     req: Request,
@@ -29,6 +30,7 @@ export const actualizarUsuario = async (
     req: Request,
     res: Response
 ) => {
+    try{
     const id = Number(req.params.id)
 
     await prisma.usuario.update({
@@ -41,6 +43,17 @@ export const actualizarUsuario = async (
     })
 
     res.status(204).send()
+    
+    } catch (error) {
+        if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2025"
+        ) {
+            res.status(404).send()
+            return
+        }
+        res.status(500).send()
+    }
 }
 
 export const eliminarUsuario = async (
