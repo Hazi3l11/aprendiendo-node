@@ -13,3 +13,14 @@ export const obtenerPublicaciones = async (
 
     res.json(publicaciones)
 }
+
+export const crearPublicacion = async (
+    req: Request,
+    res: Response
+) => {
+    try{
+
+    }catch (error) {
+        
+    }
+}
