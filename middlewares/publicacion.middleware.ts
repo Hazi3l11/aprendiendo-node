@@ -1,5 +1,4 @@
 import type { Request, Response, NextFunction } from "express";
-import { error } from "node:console";
 
 export const validarPublicacion = (
     req: Request,
@@ -11,7 +10,7 @@ export const validarPublicacion = (
             error: "Faltan datos"
         })
     }
-    if (req.body.titulo !== "string"){
+    if (typeof req.body.titulo !== "string"){
         return res.status(400).json({
             error: "El titulo debe de ser texto"
         })
@@ -21,7 +20,7 @@ export const validarPublicacion = (
             error: "El titulo debe tener minimo un 1 caracter y maximo 100"
         })
     }
-    if (req.body.contenido !== "string") {
+    if (typeof req.body.contenido !== "string") {
         return res.status(400).json({
             error: "El contenido debe de ser texto"
         })
@@ -31,7 +30,7 @@ export const validarPublicacion = (
             error: "El contenido debe tener mainimo 2 caracteres y maximo 200"
         })
     }
-    if (req.body.usuarioId !== "number"){
+    if (typeof req.body.usuarioId !== "number"){
         return res.status(400).json({
             error: "El id del usuario debe ser un numero"
         })
