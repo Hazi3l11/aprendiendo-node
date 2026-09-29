@@ -1,6 +1,6 @@
 import express from "express"
-import usuarioRoutes from "./routes/usuario.routes.js"
-import publicacionRoutes from "./routes/publicacion.routes.js"
+import usuarioRoutes from "./src/routes/usuario.routes.js"
+import publicacionRoutes from "./src/routes/publicacion.routes.js"
 
 const app = express()
 

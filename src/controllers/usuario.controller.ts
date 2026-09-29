@@ -1,6 +1,6 @@
 import type { Request, Response } from "express"
 import prisma from "../db.js"
-import { Prisma } from "../generated/prisma/client.js"
+import { Prisma } from "../../generated/prisma/client.js"
 
 export const obtenerUsuarios = async (
     req: Request,

@@ -40,7 +40,7 @@ export const crearPublicacion = async (
         })
         
         res.status(201).json({
-            mensaje: `Publicacion creada: ${publicacion}`
+            mensaje: publicacion
         })
 
     }catch (error) {
