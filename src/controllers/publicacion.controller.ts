@@ -19,9 +19,10 @@ export const crearPublicacion = async (
     res: Response
 ) => {
     try{
+        const {titulo, contenido, usuarioId} = req.validatedData
         const usuario = await prisma.usuario.findUnique({
             where: {
-                id: req.body.usuarioId
+                id: usuarioId
             }
         })
 
@@ -33,9 +34,9 @@ export const crearPublicacion = async (
 
         const publicacion = await prisma.publicacion.create({
             data: {
-                titulo: req.body.titulo,
-                contenido: req.body.contenido,
-                usuarioId: usuario.id
+                titulo,
+                contenido,
+                usuarioId
             }
         })
         

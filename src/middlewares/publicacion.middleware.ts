@@ -15,5 +15,7 @@ export const validarPublicacion = (
         })
     }
 
+    req.validatedData = resultado.data
+
     next()
 }
