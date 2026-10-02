@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
 import type { ZodType } from "zod"
 
-export const validarSchema = (schema: ZodType) => {
+export const validarSchema = <T>(schema: ZodType<T>) => {
     return (
         req: Request,
         res: Response,
