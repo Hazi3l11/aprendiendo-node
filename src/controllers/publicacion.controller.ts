@@ -1,10 +1,8 @@
 import type { Request, Response } from "express";
 import prisma from "../db.js";
 import { publicacionInput } from "../schemas/publicacion.schema.js";
+import { ValidatedRequest } from "../types/validatedRequest.js";
 
-type PublicacionRequest = Request & {
-    validatedData: publicacionInput
-}
 
 export const obtenerPublicaciones = async (
     req: Request,
@@ -20,7 +18,7 @@ export const obtenerPublicaciones = async (
 }
 
 export const crearPublicacion = async (
-    req: PublicacionRequest,
+    req: ValidatedRequest<publicacionInput>,
     res: Response
 ) => {
     try{
