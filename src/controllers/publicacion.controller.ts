@@ -3,18 +3,39 @@ import prisma from "../db.js";
 import { publicacionInput } from "../schemas/publicacion.schema.js";
 import { ValidatedRequest } from "../types/validatedRequest.js";
 
+export type PublicacionResponse = {
+    id: number,
+    titulo: string,
+    contenido: string,
+    autor: string
+}
 
 export const obtenerPublicaciones = async (
     req: Request,
     res: Response
 ) => {
-    const publicaciones = await prisma.publicacion.findMany({
+    try {
+        const publicaciones = await prisma.publicacion.findMany({
         include: {
             usuario: true
         }
     })
 
-    res.json(publicaciones)
+    const respuesta: PublicacionResponse[] = publicaciones.map((publicacion) => ({
+        id: publicacion.id,
+        titulo: publicacion.titulo,
+        contenido: publicacion.contenido,
+        autor: publicacion.usuario.nombre
+    }))
+
+    res.json(respuesta)
+    } catch(error) {
+        console.log("Error al consultar publicaciones", error)
+
+        return res.status(500).json({
+            error: "Error interno del servidor"
+        })
+    }
 }
 
 export const crearPublicacion = async (
