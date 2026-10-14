@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import prisma from "../db.js";
 import { publicacionInput } from "../schemas/publicacion.schema.js";
 import { ValidatedRequest } from "../types/validatedRequest.js";
+import { Prisma } from "../../generated/prisma/client.js"
 
 export type PublicacionResponse = {
     id: number,
@@ -69,8 +70,19 @@ export const crearPublicacion = async (
         })
 
     }catch (error) {
-        res.status(500).json({
-            error: "Error el serviddor"
-        })
+         if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2025"
+        ) {
+            res.status(404).send()
+            return
+        } else if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2003"
+        ) {
+            res.status(500).send()
+            return
+        }
+        res.status(500).send()
     }
 }
