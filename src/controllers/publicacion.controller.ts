@@ -86,3 +86,25 @@ export const crearPublicacion = async (
         res.status(500).send()
     }
 }
+
+export const eliminarPublicacion = async (
+    req: Request,
+    res: Response
+) => {
+    try{
+        const id = Number(req.params.id)
+        await prisma.publicacion.delete({
+            where: {
+                id: id
+            }
+        })
+        return res.status(204).send()
+
+    }catch (error) {
+        console.log("Error al eliminar publicacion", error)
+
+        return res.status(500).json({
+            error: "Error interno del servidor"
+        })
+    }
+}
