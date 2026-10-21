@@ -14,7 +14,7 @@ try {
     await prisma.$transaction(async (tx) => {
     const pedido = await tx.pedido.create({
         data: {
-            cantidad: 6,
+            cantidad: 9,
             productoId: producto.id
         }
     })
@@ -41,6 +41,7 @@ try {
 }
 catch (error){
     console.log(error)
+    pedido_id = undefined
 }
 
 const consulta = await prisma.producto.findUnique({
