@@ -1,6 +1,6 @@
 import prisma from "../db.js"
-import { Prisma } from "../../generated/prisma/client.js"
 import { Request, Response } from "express"
+import { pedidoInput } from "../schemas/pedido.schema.js";
 
 export const crearPedido = async (
     req: Request,
@@ -8,10 +8,12 @@ export const crearPedido = async (
 ) => {
     try {
         const id = Number(req.params.id)
+        const { cantidad } = req.validatedData as pedidoInput
+
         const realizarPedido = await prisma.$transaction(async (tx)=> {
         const pedido = await tx.pedido.create({
             data: {
-                cantidad: req.body.cantidad,
+                cantidad: cantidad,
                 productoId: id
             }
         })
@@ -30,11 +32,20 @@ export const crearPedido = async (
             }
         })
         if(descuento.count === 0) {
-            throw new Error ("Stock insuficiente")
+            return res.status(409).json({
+                error: "Stock insuficiente"
+            })
         }
+
+        return res.status(201).json({
+            mensaje: pedido
+        })
     })
     }
     catch (error) {
         console.log(error)
+        return res.status(500).json({
+            error: "Error interno del servidor"
+        })
     }
 }

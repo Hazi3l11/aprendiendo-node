@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import prisma from "../db.js";
 import { publicacionInput } from "../schemas/publicacion.schema.js";
-import { ValidatedRequest } from "../types/validatedRequest.js";
 import { Prisma } from "../../generated/prisma/client.js"
 
 export type PublicacionResponse = {
@@ -40,11 +39,11 @@ export const obtenerPublicaciones = async (
 }
 
 export const crearPublicacion = async (
-    req: ValidatedRequest<publicacionInput>,
+    req: Request,
     res: Response
 ) => {
     try{
-        const {titulo, contenido, usuarioId} = req.validatedData
+        const {titulo, contenido, usuarioId} = req.validatedData as publicacionInput
         const usuario = await prisma.usuario.findUnique({
             where: {
                 id: usuarioId

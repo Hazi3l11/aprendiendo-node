@@ -4,7 +4,7 @@ import type { ZodType } from "zod"
 
 export const validarSchema = <T>(schema: ZodType<T>) => {
     return (
-        req: ValidatedRequest<T>,
+        req: Request,
         res: Response,
         next: NextFunction
     ) => {
