@@ -1,6 +1,6 @@
 import prisma from "../db.js"
 import { Request, Response } from "express"
-import { pedidoInput } from "../schemas/pedido.schema.js";
+import { pedidoInput, pedidoSchema } from "../schemas/pedido.schema.js";
 
 export const crearPedido = async (
     req: Request,
@@ -44,6 +44,51 @@ export const crearPedido = async (
     }
     catch (error) {
         console.log(error)
+        return res.status(500).json({
+            error: "Error interno del servidor"
+        })
+    }
+}
+
+export const obtenerPedidos = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        const pedidos = await prisma.pedido.findMany()
+
+        return res.status(200).json({
+            pedidos: pedidos
+        })
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+export const eliminarPedido = async (
+    req: Request,
+    res: Response
+) => {
+    try{
+        const id = Number(req.params.id)
+        const pedido = await prisma.pedido.delete({
+            where: {
+                id: id
+            }
+        })
+        
+        if (!pedido) {
+            return res.status(400).json({
+                error: "Pedido no encontrado"
+            })
+        }
+        
+        return res.status(204).send("Pedido eliminado")
+
+    }catch (error) {
+        console.log("Error al eliminar pedido", error)
+
         return res.status(500).json({
             error: "Error interno del servidor"
         })
