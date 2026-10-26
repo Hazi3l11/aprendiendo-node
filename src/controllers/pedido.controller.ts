@@ -10,6 +10,16 @@ export const crearPedido = async (
         const id = Number(req.params.id)
         const { cantidad } = req.validatedData as pedidoInput
 
+        const producto = await prisma.producto.findUnique({
+            where: {
+                id: id
+            }
+        })
+
+        if (producto === null){
+            throw new Error ("Producto no encontrado")
+        }
+
         const realizarPedido = await prisma.$transaction(async (tx)=> {
         const pedido = await tx.pedido.create({
             data: {
@@ -32,9 +42,7 @@ export const crearPedido = async (
             }
         })
         if(descuento.count === 0) {
-            return res.status(409).json({
-                error: "Stock insuficiente"
-            })
+            throw new Error ("Stock insuficiente")
         }
 
         return res.status(201).json({
@@ -42,11 +50,17 @@ export const crearPedido = async (
         })
     })
     }
+
     catch (error) {
-        console.log(error)
-        return res.status(500).json({
+        if (error === "Stock insuficiente"){
+            return res.status(409).json(error)
+        } else if (error === "Producto no encontrado") {
+            return res.status(404).json(error)
+        } else {
+            return res.status(500).json({
             error: "Error interno del servidor"
         })
+        }
     }
 }
 
@@ -63,6 +77,9 @@ export const obtenerPedidos = async (
     }
     catch (error) {
         console.log(error)
+        return res.status(404).json({
+            error: "No hay pedidos"
+        })
     }
 }
 

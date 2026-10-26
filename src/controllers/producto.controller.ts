@@ -21,7 +21,9 @@ export const crearProducto = async (
     }
     catch (error) {
         console.log(error)
-        res.status(500)
+        res.status(500).json({
+            error: "Error interno del servidor"
+        })
     }
 }
 
