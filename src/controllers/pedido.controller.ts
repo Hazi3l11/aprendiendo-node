@@ -16,11 +16,29 @@ export const crearPedido = async (
             }
         })
 
-        if (producto === null){
+        if (!producto){
             throw new Error ("Producto no encontrado")
         }
 
-        const realizarPedido = await prisma.$transaction(async (tx)=> {
+        const resultadoPedido = await prisma.$transaction(async (tx)=> {
+            const descuento = await tx.producto.updateMany({
+            where: {
+                id: id,
+                stock: {
+                    gte: cantidad
+                }
+            },
+            data: {
+                stock: {
+                    decrement: cantidad
+                }
+            }
+        })
+
+         if(descuento.count === 0) {
+            throw new Error ("Stock insuficiente")
+        }
+
         const pedido = await tx.pedido.create({
             data: {
                 cantidad: cantidad,
@@ -28,34 +46,24 @@ export const crearPedido = async (
             }
         })
 
-        const descuento = await tx.producto.updateMany({
-            where: {
-                id: id,
-                stock: {
-                    gte: pedido.cantidad
-                }
-            },
-            data: {
-                stock: {
-                    decrement: pedido.cantidad
-                }
-            }
-        })
-        if(descuento.count === 0) {
-            throw new Error ("Stock insuficiente")
-        }
+        return pedido
+    })
 
-        return res.status(201).json({
-            mensaje: pedido
-        })
+    return res.status(201).json({
+        mensaje: "Pediddo creado con exito",
+        pedido: resultadoPedido
     })
     }
 
-    catch (error) {
-        if (error === "Stock insuficiente"){
-            return res.status(409).json(error)
-        } else if (error === "Producto no encontrado") {
-            return res.status(404).json(error)
+    catch (error: any) {
+        if (error.message === "Stock insuficiente"){
+            return res.status(409).json({
+                error: "Stock insuficiente"
+            })
+        } else if (error.message === "Producto no encontrado") {
+            return res.status(404).json({
+                error: "Producto no encontrado"
+            })
         } else {
             return res.status(500).json({
             error: "Error interno del servidor"
