@@ -1,4 +1,5 @@
 import prisma from "../db.js"
+import { Prisma } from "../../generated/prisma/client.js";
 import { Request, Response } from "express"
 import { pedidoInput, pedidoSchema } from "../schemas/pedido.schema.js";
 
@@ -103,19 +104,20 @@ export const eliminarPedido = async (
             }
         })
         
-        if (!pedido) {
-            return res.status(400).json({
-                error: "Pedido no encontrado"
-            })
-        }
-        
         return res.status(204).send("Pedido eliminado")
 
-    }catch (error) {
-        console.log("Error al eliminar pedido", error)
-
-        return res.status(500).json({
-            error: "Error interno del servidor"
-        })
+    } catch (error: unknown) {
+        if(error instanceof Prisma.PrismaClientKnownRequestError){
+            if(error.code === "P2025"){
+                return res.status(404).json({
+                    mensaje: "Pedido no encontrado",
+                    error: error
+                })
+            }
+        } else {
+                return res.status(500).json({
+                     error: "Error interno del servidor"
+                 })
+            }
     }
 }
