@@ -1,7 +1,7 @@
 import prisma from "../db.js"
 import { Prisma } from "../../generated/prisma/client.js";
 import { Request, Response } from "express"
-import { pedidoInput, pedidoSchema } from "../schemas/pedido.schema.js";
+import { pedidoInput, } from "../schemas/pedido.schema.js";
 
 export const crearPedido = async (
     req: Request,
@@ -98,23 +98,21 @@ export const eliminarPedido = async (
 ) => {
     try{
         const id = Number(req.params.id)
-        const pedido = await prisma.pedido.delete({
+        await prisma.pedido.delete({
             where: {
                 id: id
             }
         })
         
-        return res.status(204).send("Pedido eliminado")
+        return res.status(204).send()
 
     } catch (error: unknown) {
-        if(error instanceof Prisma.PrismaClientKnownRequestError){
-            if(error.code === "P2025"){
+        if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")
+            {
                 return res.status(404).json({
-                    mensaje: "Pedido no encontrado",
-                    error: error
+                    error: "Pedido no encontrado"
                 })
-            }
-        } else {
+            } else {
                 return res.status(500).json({
                      error: "Error interno del servidor"
                  })
