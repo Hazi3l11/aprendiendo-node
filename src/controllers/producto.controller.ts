@@ -71,3 +71,10 @@ export const eliminarProducto = async (
         })
     }
 }
+
+export const pruebaProducto = async (
+    req: Request,
+    res: Response
+) => {
+    throw new Error ("Error de pruebas")
+}
