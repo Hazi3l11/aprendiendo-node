@@ -1,4 +1,4 @@
-import { ErrorRequestHandler, NextFunction } from "express";
+import { ErrorRequestHandler } from "express";
 
 export const manejarErrores: ErrorRequestHandler = (
     error,
@@ -6,7 +6,10 @@ export const manejarErrores: ErrorRequestHandler = (
     res,
     next
 ) => {
+
+    console.log(error)
+    
     return res.status(500).json({
-        error: "Error interno del servidor de prueba"
+        error: "Error interno del servidor"
     })
 }
