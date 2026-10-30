@@ -81,7 +81,6 @@ export const obtenerPedidos = async (
 ) => {
     try {
         const pedidos = await prisma.pedido.findMany()
-        throw new Error("Error de prueba")
         return res.status(200).json({
             pedidos: pedidos
         })
