@@ -2,6 +2,7 @@ import prisma from "../db.js"
 import { Prisma } from "../../generated/prisma/client.js";
 import { Request, Response } from "express"
 import { pedidoInput, } from "../schemas/pedido.schema.js";
+import { NextFunction } from "express";
 
 export const crearPedido = async (
     req: Request,
@@ -75,20 +76,19 @@ export const crearPedido = async (
 
 export const obtenerPedidos = async (
     req: Request,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const pedidos = await prisma.pedido.findMany()
-
+        throw new Error("Error de prueba")
         return res.status(200).json({
             pedidos: pedidos
         })
     }
     catch (error) {
-        console.log(error)
-        return res.status(404).json({
-            error: "No hay pedidos"
-        })
+        next(error)
+
     }
 }
 
