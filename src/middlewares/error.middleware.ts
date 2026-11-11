@@ -1,4 +1,5 @@
 import { ErrorRequestHandler } from "express";
+import { AppError } from "../errors/AppError.js";
 
 export const manejarErrores: ErrorRequestHandler = (
     error,
@@ -9,7 +10,13 @@ export const manejarErrores: ErrorRequestHandler = (
 
     console.log(error)
     
-    return res.status(500).json({
+    if ( error instanceof AppError) {
+        return res.status(error.statusCode).json({
+            message: error.message
+        })
+    } else {
+        return res.status(500).json({
         error: "Error interno del servidor"
     })
+    }
 }

@@ -3,12 +3,12 @@ import { Prisma } from "../../generated/prisma/client.js";
 import { Request, Response } from "express"
 import { pedidoInput, } from "../schemas/pedido.schema.js";
 import { NextFunction } from "express";
+import { AppError } from "../errors/AppError.js";
 
 export const crearPedido = async (
     req: Request,
     res: Response
 ) => {
-    try {
         const id = Number(req.params.id)
         const { cantidad } = req.validatedData as pedidoInput
 
@@ -19,7 +19,7 @@ export const crearPedido = async (
         })
 
         if (!producto){
-            throw new Error ("Producto no encontrado")
+            throw new AppError ("Producto no encontrado", 404)
         }
 
         const resultadoPedido = await prisma.$transaction(async (tx)=> {
@@ -38,7 +38,7 @@ export const crearPedido = async (
         })
 
          if(descuento.count === 0) {
-            throw new Error ("Stock insuficiente")
+            throw new AppError ("Stock insuficiente", 409)
         }
 
         const pedido = await tx.pedido.create({
@@ -56,23 +56,6 @@ export const crearPedido = async (
         pedido: resultadoPedido
     })
     }
-
-    catch (error: any) {
-        if (error.message === "Stock insuficiente"){
-            return res.status(409).json({
-                error: "Stock insuficiente"
-            })
-        } else if (error.message === "Producto no encontrado") {
-            return res.status(404).json({
-                error: "Producto no encontrado"
-            })
-        } else {
-            return res.status(500).json({
-            error: "Error interno del servidor"
-        })
-        }
-    }
-}
 
 export const obtenerPedidos = async (
     req: Request,
