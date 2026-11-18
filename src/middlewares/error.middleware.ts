@@ -1,5 +1,7 @@
 import { ErrorRequestHandler } from "express";
 import { AppError } from "../errors/AppError.js";
+import { ZodError  } from "zod";
+import { Prisma } from "../../generated/prisma/client.js";
 
 export const manejarErrores: ErrorRequestHandler = (
     error,
@@ -8,13 +10,33 @@ export const manejarErrores: ErrorRequestHandler = (
     next
 ) => {
 
-    console.log(error)
+    console.error(error)
     
     if ( error instanceof AppError) {
         return res.status(error.statusCode).json({
-            message: error.message
+            error: error.message
         })
-    } else {
+    }
+    if (error instanceof ZodError) {
+        return res.status(400).json({
+            error: "Datos de entrada invalidos",
+            details: error.issues.map(issue => ({
+                field: issue.path.join("."),
+                message: issue.message
+                
+            }))
+        })
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (error.code) {
+            case "P2002":
+                return res.status(409).json({
+                    error: "Ya existe un registro con esos datos"
+                })
+            case "P2003":
+        }
+    }
+    else {
         return res.status(500).json({
         error: "Error interno del servidor"
     })
