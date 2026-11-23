@@ -34,11 +34,20 @@ export const manejarErrores: ErrorRequestHandler = (
                     error: "Ya existe un registro con esos datos"
                 })
             case "P2003":
+                return res.status(409).json({
+                    error: "Conflicto de llave foranea"
+                })
+            case "P2025":
+                return res.status(404).json({
+                    error: "Registro no encontrado"
+                })
+            default: 
+            return res.status(500).json({
+                error: "Error interno del servidor"
+            })
         }
     }
-    else {
         return res.status(500).json({
         error: "Error interno del servidor"
     })
-    }
 }
