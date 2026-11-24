@@ -10,9 +10,7 @@ export const validarPedido = (
     const resultado = pedidoSchema.safeParse(req.body)
 
     if (!resultado.success) {
-        return res.status(400).json({
-            error: resultado.error
-        })
+        return next(resultado.error)
     }
 
     req.validatedData = resultado.data

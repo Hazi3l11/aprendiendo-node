@@ -78,7 +78,7 @@ export const eliminarPedido = async (
     req: Request,
     res: Response
 ) => {
-    try{
+  
         const id = Number(req.params.id)
         await prisma.pedido.delete({
             where: {
@@ -88,16 +88,4 @@ export const eliminarPedido = async (
         
         return res.status(204).send()
 
-    } catch (error: unknown) {
-        if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")
-            {
-                return res.status(404).json({
-                    error: "Pedido no encontrado"
-                })
-            } else {
-                return res.status(500).json({
-                     error: "Error interno del servidor"
-                 })
-            }
-    }
 }
